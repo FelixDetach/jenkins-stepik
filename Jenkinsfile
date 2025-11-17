@@ -8,5 +8,15 @@ pipeline {
                 sh 'date'
             }
         }
+        stage('System info') {
+            steps {
+                echo 'system info:'
+                sh 'uname -a'
+                echo 'directory:'
+                sh 'pwd'
+                echo 'files:'
+                sh 'ls -la'
+            }
+        }
     }
 }
