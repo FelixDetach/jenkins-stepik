@@ -20,9 +20,9 @@ pipeline {
         }
         stage('Environment') {
             steps {
-                echo 'Build number:${BUILD_NUMBER}'
-                echo 'Job Name: ${JOB_NAME}'
-                echo 'Workspace: ${WORKSPACE}'
+                echo "Build Number: ${BUILD_NUMBER}"
+                echo "Job Name: ${JOB_NAME}"
+                echo "Workspace: ${WORKSPACE}"
             }
         }
     }
