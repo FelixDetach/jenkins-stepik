@@ -24,5 +24,13 @@ pipeline{
                 echo 'Verification completed'
             }
         }
+        stage ('System info') {
+            steps {
+                echo '===System information==='
+                sh 'whoami'
+                sh 'dh -h .'
+                echo "Build Number: ${BUILD_NUMBER}"
+            }
+        }
     }
 }
