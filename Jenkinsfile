@@ -28,7 +28,7 @@ pipeline{
             steps {
                 echo '===System information==='
                 sh 'whoami'
-                sh 'dh -h .'
+                sh 'df -h .'
                 echo "Build Number: ${BUILD_NUMBER}"
             }
         }
