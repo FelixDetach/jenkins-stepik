@@ -10,7 +10,6 @@ pipeline {
             steps {
                 echo 'Building application...'
                 echo "${env.BRANCH_NAME}"
-                env.
             }
         }
 
