@@ -1,11 +1,16 @@
 pipeline {
     agent any
 
+    environment {
+        DEPLOY_ENV = 'production'
+    }
+
     stages {
         stage('Build') {
             steps {
                 echo 'Building application...'
                 echo "${env.BRANCH_NAME}"
+                env.
             }
         }
 
