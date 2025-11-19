@@ -2,12 +2,13 @@ pipeline {
     agent any
 
     stages {
-        stage('Build'){
+        stage('Build') {
             steps {
                 echo 'Building application...'
                 echo "${env.BRANCH_NAME}"
             }
         }
+
         stage('Deploy to Production') {
             when {
                 branch 'main'
@@ -17,17 +18,21 @@ pipeline {
                 echo 'Branch: main - deployment allowed'
             }
         }
+
         stage('Run tests') {
-            steps {
-                when {
-                    expression {
-                        env.BUILD_NUMBER.toInteger() % 2 == 0
-                    }
+            when {
+                expression {
+                    env.BUILD_NUMBER.toInteger() % 2 == 0
                 }
+            }
+            steps {
                 script {
-                    echo "Running tests for build $(env.BUILD_NUMBER)"
+                    echo "Running tests for build ${env.BUILD_NUMBER}"
                     echo "This is an even-numbered build"
                 }
+            }
+        }
+
         stage('Skip tests') {
             when {
                 expression {
@@ -35,10 +40,11 @@ pipeline {
                 }
             }
             steps {
-                echo "Skipping tests for build $(env.BUILD_NUMBER)"
-                echo "This is an odd build number"
+                echo "Skipping tests for build ${env.BUILD_NUMBER}"
+                echo "This is an odd-numbered build"
             }
         }
+
         stage('Security scan') {
             when {
                 allOf {
@@ -47,26 +53,28 @@ pipeline {
                         branch 'release'
                     }
                     expression {
-                        DEPLOY_ENV == 'staging' or DEPLOY_ENV == 'production'
+                        env.DEPLOY_ENV == 'staging' || env.DEPLOY_ENV == 'production'
                     }
                 }
             }
-            script {
-                echo "Running security scan"
-                echo "Branch: ${env.BRANCH_NAME}, Environment: ${DEPLOY_ENV}"
+            steps {
+                script {
+                    echo "Running security scan"
+                    echo "Branch: ${env.BRANCH_NAME}, Environment: ${env.DEPLOY_ENV}"
+                }
             }
         }
+
         stage('Summary') {
             steps {
-                echo '''
-                ===Pipeline Execution Summary===
+                echo """
+                === Pipeline Execution Summary ===
                 Branch: ${env.BRANCH_NAME}
                 Build Number: ${env.BUILD_NUMBER}
-                Deploy environment: $env.DEPLOY_ENV
+                Deploy environment: ${env.DEPLOY_ENV}
                 All stages completed.
-                '''
+                """
             }
-        }
         }
     }
 }
