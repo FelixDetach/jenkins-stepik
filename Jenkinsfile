@@ -79,7 +79,9 @@ pipeline {
         stage('filter-environment') {
             steps {
                 script {
-                    echo "Filter stage placeholder"
+                    dev enfs = ['dev', 'test', 'staging', 'prod', 'backup']
+                    active = enfs.findAll{it != 'backup'}
+                    echo "Active environments: ${active}"
                 }
             }
         }
