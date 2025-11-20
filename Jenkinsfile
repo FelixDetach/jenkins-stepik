@@ -19,9 +19,9 @@ pipeline {
                 script {
                     def servers = ['server1.example.com', 'server2.example.com', 'server3.example.com']
                     for (server in servers) {
-                        echo "Deploying to $(server)"
+                        echo "Deploying to ${server}"
                         sleep(1)
-                        echo "Deployment to $(server) completed."
+                        echo "Deployment to ${server} completed."
                     }
                 }
             }
