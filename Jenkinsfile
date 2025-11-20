@@ -1,7 +1,7 @@
 pipeline {
     agent any
 
-    stages {}
+    stages {
         stage('List Basics') {
             steps {
                 script {
