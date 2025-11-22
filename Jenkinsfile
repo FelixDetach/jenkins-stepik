@@ -2,88 +2,57 @@ pipeline {
     agent any
 
     stages {
-
-        stage('List Basics') {
+        stage('Build') {
             steps {
-                script {
-                    def environments = ['dev', 'staging', 'production']
+                echo "Building application..."
+                sh 'mkdir -p ./build'
+                sh 'echo "Application binary" > ./build/app.jar'
+            }
+        }
 
-                    echo "${environments[0]}"
-                    echo "${environments[-1]}"
-                    echo "${environments.size()}"
-
-                    environments.add('qa')
-                    echo "${environments.size()}"
+        stage('Test') {
+            steps {
+                echo "Running tests..."
+                sleep 2
+                echo "Test completed"
+            }
+            post {
+                always {
+                    echo "Pipeline finished"
+                    echo "Build number: ${env.BUILD_NUMBER}"
+                }
+                failure {
+                    echo "Pipeline failed"
+                    echo "Build number: ${env.BUILD_NUMBER}"
                 }
             }
         }
 
-        stage('Deploy to Servers') {
+        stage('Deploy') {
             steps {
-                script {
-                    def servers = [
-                        'server1.example.com',
-                        'server2.example.com',
-                        'server3.example.com'
-                    ]
-
-                    for (server in servers) {
-                        echo "Deploying to ${server}"
-                        sleep(time: 1, unit: 'SECONDS')
-                        echo "Deployment to ${server} completed."
-                    }
+                echo "Deploying application..."
+                sleep 3
+                echo "Deployment completed"
+            }
+            post {
+                always {
+                    echo "Deployment stage finished"
+                    sh 'ls -la build/'
                 }
             }
         }
+    }
 
-        stage('Config Map') {
-            steps {
-                script {
-                    def config = [
-                        'appName'    : 'MyWebApp',
-                        'version'    : '2.0.0',
-                        'port'       : 8080,
-                        'environment': 'production'
-                    ]
+    post {
+        always {
+            echo "===Post actions==="
+            echo "Pipeline completed"
+            sh 'date'
 
-                    config.each { key, value ->
-                        echo "${key}: ${value}"
-                    }
-
-                    config['region'] = 'us-east-1'
-
-                    echo "${config.size()}"
-                    echo "${config}"
-                }
-            }
-        }
-
-        stage('Multi-environment deploy') {
-            steps {
-                script {
-                    def environments = [
-                        'dev'    : ['dev1.example.com', 'dev2.example.com'],
-                        'staging': ['stage1.example.com'],
-                        'prod'   : ['prod1.example.com', 'prod2.example.com', 'prod3.example.com']
-                    ]
-
-                    environments.each { env, servers ->
-                        for (server in servers) {
-                            echo "Deploying to ${env}: ${server}"
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('filter-environment') {
-            steps {
-                script {
-                    def enfs = ['dev', 'test', 'staging', 'prod', 'backup']
-                    active = enfs.findAll{it != 'backup'}
-                    echo "Active environments: ${active}"
-                }
-            }
+            echo "Archiving build artifacts..."
+            sh 'tar -czf build_artifacts.tar.gz -C build .'
+            sh 'ls -lh build_artifacts.tar.gz'
+            echo "Archive artifacts completed"
         }
     }
 }
